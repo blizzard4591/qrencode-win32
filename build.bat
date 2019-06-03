@@ -12,12 +12,14 @@ goto commonExit
 :x86
 echo Platform: x86
 SET COLLECTION_DIR=Win32
+SET PROJECT_PLATFORM=Win32
 
 goto build
 
 :x64
-echo "Platform: x64"
+echo Platform: x64
 SET COLLECTION_DIR=x64
+SET PROJECT_PLATFORM=x64
 
 goto build
 
@@ -31,21 +33,23 @@ goto build
 cd qrencode-win32\vc15
 
 echo Building configuration: DEBUG %PLATFORM%
-devenv /clean Debug-Lib /project qrcodelib qrcode_vc15.sln
+devenv /clean "Debug-Lib|%PROJECT_PLATFORM%" /project qrcodelib qrcode_vc15.sln
 IF ERRORLEVEL 1 GOTO errorHandling
 
-devenv /build Debug-Lib /project qrcodelib qrcode_vc15.sln
+devenv /build "Debug-Lib|%PROJECT_PLATFORM%" /project qrcodelib qrcode_vc15.sln
 IF ERRORLEVEL 1 GOTO errorHandling
 
+echo Copying "%COLLECTION_DIR%\Debug-Lib\qrcodelib.lib" to "%QR_OUTPUT_DIR%\compile\%PLATFORM%\Debug\"...
 xcopy /Y "%COLLECTION_DIR%\Debug-Lib\qrcodelib.lib" "%QR_OUTPUT_DIR%\compile\%PLATFORM%\Debug\"
 
 echo Building configuration: RELEASE %PLATFORM%
-devenv /clean Release-Lib /project qrcodelib qrcode_vc15.sln
+devenv /clean "Release-Lib|%PROJECT_PLATFORM%" /project qrcodelib qrcode_vc15.sln
 IF ERRORLEVEL 1 GOTO errorHandling
 
-devenv /build Release-Lib /project qrcodelib qrcode_vc15.sln
+devenv /build "Release-Lib|%PROJECT_PLATFORM%" /project qrcodelib qrcode_vc15.sln
 IF ERRORLEVEL 1 GOTO errorHandling
 
+echo Copying "%COLLECTION_DIR%\Release-Lib\qrcodelib.lib" to "%QR_OUTPUT_DIR%\compile\%PLATFORM%\Release\"...
 xcopy /Y "%COLLECTION_DIR%\Release-Lib\qrcodelib.lib" "%QR_OUTPUT_DIR%\compile\%PLATFORM%\Release\"
 
 cd ..
